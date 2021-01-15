@@ -154,7 +154,7 @@ func vIntNum(data []byte) uint64 {
 	return n - hibit(n)
 }
 
-// VarNum  支持0,1,2,3字节, Big endian https://stackoverflow.com/questions/45000982/convert-3-bytes-to-int-in-go
+// VarNum  支持0,1,2,3,4,5字节, Big endian https://stackoverflow.com/questions/45000982/convert-3-bytes-to-int-in-go
 func VarNum(b []byte) uint64 {
 	var l = len(b)
 	if l == 0 {
@@ -163,8 +163,12 @@ func VarNum(b []byte) uint64 {
 		return uint64(b[0])
 	} else if l == 2 {
 		return uint64(int(b[1]) | int(b[0])<<8)
-	} else {
+	} else if l == 3 {
 		return uint64(int(b[2]) | int(b[1])<<8 | int(b[0])<<16)
+	} else if l == 4 {
+		return uint64(int(b[3]) | int(b[2])<<8 | int(b[1])<<16 | int(b[0])<<24)
+	} else {
+		return uint64(int(b[4]) | int(b[3])<<8 | int(b[2])<<16 | int(b[1])<<24 | int(b[0])<<32)
 	}
 }
 
