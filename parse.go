@@ -35,6 +35,9 @@ func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) map[int][2]
 			arr = append(arr, n)
 		}
 		var l = len(arr) - 1
+		if l < 0 {
+			return res
+		}
 		var segmentStart = indexEndOffset - arr[0] + 1
 		var segmentEnd = totalSize
 		for i, item := range arr {
