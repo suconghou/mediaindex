@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"math"
+	"strconv"
 )
 
 // Parser for ebml
@@ -167,8 +168,10 @@ func VarNum(b []byte) uint64 {
 		return uint64(int(b[2]) | int(b[1])<<8 | int(b[0])<<16)
 	} else if l == 4 {
 		return uint64(int(b[3]) | int(b[2])<<8 | int(b[1])<<16 | int(b[0])<<24)
-	} else {
+	} else if l == 5 {
 		return uint64(int(b[4]) | int(b[3])<<8 | int(b[2])<<16 | int(b[1])<<24 | int(b[0])<<32)
+	} else {
+		panic("unsupport vint len " + strconv.Itoa(l))
 	}
 }
 
