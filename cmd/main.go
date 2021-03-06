@@ -25,23 +25,23 @@ func parseMp4() error {
 	// 包含632 但不包含1023,所以391字节
 	fmt.Println(len(data))
 	fmt.Printf("%x\n", md5sum(data))
-	var p = mediaindex.ParseMp4(data)
-	fmt.Println(p)
+	p, err := mediaindex.ParseMp4(data)
+	fmt.Println(p, err)
 	return nil
 }
 
 func parseWebm() error {
-	bs, err := ioutil.ReadFile("/Users/admin/Downloads/249.webm")
+	bs, err := ioutil.ReadFile("/tmp/220-1041.ts")
 	if err != nil {
 		return err
 	}
 	// indexRange: {start: "219", end: "1228"}
-	data := bs[259:764]
+	data := bs
 	// 包含632 但不包含1023,所以391字节
 	fmt.Println(len(data))
 	fmt.Printf("%x\n", md5sum(data))
-	var p = mediaindex.ParseWebM(data, 764, 1727516)
-	fmt.Println(p)
+	p, err := mediaindex.ParseWebM(data, 1041, 6478399)
+	fmt.Println(p, err)
 	return nil
 }
 

@@ -1,26 +1,52 @@
 package mediaindex
 
 import (
+	"errors"
+
 	"github.com/suconghou/mediaindex/ebml"
 	"github.com/suconghou/mediaindex/sidx"
 )
 
 // ParseMp4 info
-func ParseMp4(data []byte) map[int][2]uint64 {
+func ParseMp4(data []byte) (res map[int][2]uint64, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = errors.New(x)
+			case error:
+				err = x
+			default:
+				err = errors.New("unknown panic error in ParseMp4")
+			}
+		}
+	}()
 	parser := sidx.NewParser(data)
 	info := parser.Parse()
-	res := map[int][2]uint64{}
+	res = map[int][2]uint64{}
 	for i, item := range info.References {
 		res[i] = [2]uint64{uint64(item.StartRange), uint64(item.EndRange)}
 	}
-	return res
+	return
 }
 
 // ParseWebM info
-func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) map[int][2]uint64 {
+func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) (res map[int][2]uint64, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = errors.New(x)
+			case error:
+				err = x
+			default:
+				err = errors.New("unknown panic error in ParseWebM")
+			}
+		}
+	}()
 	parser := ebml.NewParser(data)
 	info := parser.Parse()
-	res := map[int][2]uint64{}
+	res = map[int][2]uint64{}
 	if len(info) > 0 && len(info[0].Children) > 0 {
 		var arr = []uint64{}
 		for _, item := range info[0].Children {
@@ -36,7 +62,7 @@ func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) map[int][2]
 		}
 		var l = len(arr) - 1
 		if l < 0 {
-			return res
+			return
 		}
 		var segmentStart = indexEndOffset - arr[0] + 1
 		var segmentEnd = totalSize
@@ -52,5 +78,5 @@ func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) map[int][2]
 			res[i] = [2]uint64{start, end}
 		}
 	}
-	return res
+	return
 }
