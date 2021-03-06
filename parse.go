@@ -2,6 +2,7 @@ package mediaindex
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/suconghou/mediaindex/ebml"
 	"github.com/suconghou/mediaindex/sidx"
@@ -17,7 +18,7 @@ func ParseMp4(data []byte) (res map[int][2]uint64, err error) {
 			case error:
 				err = x
 			default:
-				err = errors.New("unknown panic error in ParseMp4")
+				err = fmt.Errorf("%v", r)
 			}
 		}
 	}()
@@ -40,7 +41,7 @@ func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) (res map[in
 			case error:
 				err = x
 			default:
-				err = errors.New("unknown panic error in ParseWebM")
+				err = fmt.Errorf("%v", r)
 			}
 		}
 	}()
