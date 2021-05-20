@@ -136,10 +136,13 @@ func (p *ParserElement) parseElement(id string, data []byte) *ParserElement {
 	return ele
 }
 
-// 传入一个字节8位, 判断前多少个bit是0, 返回值可能为 0 - 7
+// 传入一个字节8位, 判断前多少个bit是0, 返回值可能为 0 - 8
 func vIntWidth(b uint8) uint8 {
 	var width uint8 = 0
 	var num = float64(b)
+	if b < 1 {
+		return 8
+	}
 	for {
 		if num >= math.Pow(2, float64(7-width)) {
 			break
