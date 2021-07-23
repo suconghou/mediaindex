@@ -8,8 +8,8 @@ import (
 	"github.com/suconghou/mediaindex/sidx"
 )
 
-// ParseMp4 info
-func ParseMp4(data []byte) (res map[int][2]uint64, err error) {
+// ParseMp4 info, start 最小值为 indexEndOffset+1 , end 最大值为文件大小(sidx内部自动读出来的)
+func ParseMp4(data []byte, indexEndOffset uint64) (res map[int][2]uint64, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch x := r.(type) {
@@ -23,7 +23,7 @@ func ParseMp4(data []byte) (res map[int][2]uint64, err error) {
 		}
 	}()
 	parser := sidx.NewParser(data)
-	info := parser.Parse()
+	info := parser.Parse(uint32(indexEndOffset))
 	res = map[int][2]uint64{}
 	for i, item := range info.References {
 		res[i] = [2]uint64{uint64(item.StartRange), uint64(item.EndRange)}
@@ -31,7 +31,7 @@ func ParseMp4(data []byte) (res map[int][2]uint64, err error) {
 	return
 }
 
-// ParseWebM info
+// ParseWebM info,start最小值为indexEndOffset+1,end最大值为文件大小;下一个块的start是等于上一个块的end
 func ParseWebM(data []byte, indexEndOffset uint64, totalSize uint64) (res map[int][2]uint64, err error) {
 	defer func() {
 		if r := recover(); r != nil {

@@ -61,7 +61,7 @@ func (p *Parser) readUInt64() uint64 {
 }
 
 // Parse return raw parsed info
-func (p *Parser) Parse() *ParsedInfo {
+func (p *Parser) Parse(indexEndoffset uint32) *ParsedInfo {
 	// 前8字节是固定的 box header,略过
 	p.read(8)
 	var (
@@ -85,7 +85,7 @@ func (p *Parser) Parse() *ParsedInfo {
 		referenceCount = p.readUInt16()
 		i              uint16
 		references     = []*ReferenceItem{}
-		offset         = uint32(firstOffset)
+		offset         = uint32(firstOffset) + indexEndoffset + 1
 		time           = earliestPresentationTime
 	)
 
@@ -99,7 +99,7 @@ func (p *Parser) Parse() *ParsedInfo {
 		p.read(4)
 
 		startRange := offset
-		endRange := offset + referenceSize - 1
+		endRange := offset + referenceSize
 
 		item := &ReferenceItem{
 			ReferenceType:      referenceType,
